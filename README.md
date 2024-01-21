@@ -1,4 +1,4 @@
-# Wresult
+# Wresult (wrapped Result)
 
 Wresult is a monad aimed to simplify the handling of Success and Failure scenarios in Kotlin.
 
