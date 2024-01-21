@@ -1,6 +1,6 @@
 # Wresult
 
-Wresult is a monad aimed to simplify the handle of Success and Failure scenarios in Kotlin.
+Wresult is a monad aimed to simplify the handling of Success and Failure scenarios in Kotlin.
 
 ### Installation
 
