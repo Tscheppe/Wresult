@@ -1,3 +1,7 @@
+# Wresult
+
+Wresult is a monad aimed to simplify the handle of Success and Failure scenarios in Kotlin.
+
 ### Installation
 
 **Step 1.** Add the JitPack repository to your build file
