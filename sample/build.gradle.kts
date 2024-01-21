@@ -10,7 +10,3 @@ application {
 dependencies {
     implementation(project(":wresult"))
 }
-
-kotlin {
-    jvmToolchain(8)
-}

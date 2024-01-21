@@ -10,10 +10,6 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-kotlin {
-    jvmToolchain(8)
-}
-
 publishing {
     publications {
         create<MavenPublication>("maven") {
