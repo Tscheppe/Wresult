@@ -15,7 +15,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "at.tscheppe"
             artifactId = "wresult"
-            version = "1.0.0"
+            version = "1.0.1"
 
             from(components["java"])
         }
