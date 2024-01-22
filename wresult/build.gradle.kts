@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "at.tscheppe.wresult"
-version = "1.0"
+version = "1.0.1"
 
 dependencies {
     testImplementation(kotlin("test"))
