@@ -2,6 +2,7 @@ package at.tscheppe.wresult
 
 import at.tscheppe.wresult.Wresult.Companion.wresultOf
 import at.tscheppe.wresult.Wresult.Failure
+import kotlinx.coroutines.runBlocking
 import kotlin.random.Random
 
 sealed class ExplicitFailure : Failure() {
@@ -15,10 +16,22 @@ fun main() {
     val result = wResult
         .onSuccess { println("Success") }
         .onFailure { println("Error") }
-        .mapOnFailureToWresultOf { performAction() }
+        .onSuccessMapToWresultOf { performAction() }
         .getOrElse(false)
 
     println(result)
+
+    runBlocking {
+        wresultOf {
+            runBlocking { 1 }
+        }.onSuccessMapToWresultOf {
+            runBlocking { 1 }
+        }.onSuccessMapToWresultOf {
+            1
+        }.onFailureMapToWresultOf {
+            runBlocking { 1 }
+        }
+    }
 }
 
 
