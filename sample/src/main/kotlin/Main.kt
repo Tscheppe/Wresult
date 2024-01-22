@@ -1,22 +1,15 @@
 package at.tscheppe.wresult
 
 import at.tscheppe.wresult.Wresult.Companion.wresultOf
-import at.tscheppe.wresult.Wresult.Failure
 import kotlinx.coroutines.runBlocking
 import kotlin.random.Random
 
-sealed class ExplicitFailure : Failure() {
-    data object Exception : ExplicitFailure()
-    data object Error : ExplicitFailure()
-}
-
 fun main() {
     val wResult = wresultOf { performAction() }
-
     val result = wResult
         .onSuccess { println("Success") }
         .onFailure { println("Error") }
-        .onSuccessMapToWresultOf { performAction() }
+        .mapOnSuccess { performAction() }
         .getOrElse(false)
 
     println(result)
@@ -24,16 +17,29 @@ fun main() {
     runBlocking {
         wresultOf {
             runBlocking { 1 }
-        }.onSuccessMapToWresultOf {
+        }.mapOnSuccess {
             runBlocking { 1 }
-        }.onSuccessMapToWresultOf {
+        }.mapOnSuccess {
             1
-        }.onFailureMapToWresultOf {
+        }.mapOnFailure {
             runBlocking { 1 }
         }
     }
-}
 
+    wresultOf { performAction() }
+        .flatMapOnSuccess {
+            wresultOf { performAction() }
+        }.flatMapOnSuccess {
+            wresultOf { performAction() }
+        }.flatMapOnFailure {
+            when (it) {
+                is RuntimeException -> wresultOf { performAction() }
+                else -> wresultOf { performAction() }
+            }
+        }.getOrNull().also {
+            println(it)
+        }
+}
 
 private fun performAction(): Boolean {
     val returnValue = Random.nextBoolean()
