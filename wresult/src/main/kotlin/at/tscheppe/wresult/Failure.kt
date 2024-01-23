@@ -1,5 +1,6 @@
 package at.tscheppe.wresult
 
+import at.tscheppe.wresult.Wresult.Companion.suspendWresultOf
 import at.tscheppe.wresult.Wresult.Companion.wresultOf
 
 /**
@@ -17,6 +18,22 @@ inline val <T> Wresult<T>.isFailure: Boolean
  */
 inline fun <T> Wresult<T>.onFailure(
     crossinline block: (Throwable?) -> Unit,
+): Wresult<T> {
+    if (this is Wresult.Failure) {
+        block(throwable)
+    }
+    return this
+}
+
+/**
+ * Executes the given [block] function if this instance represents [Failure][Wresult.Failure].
+ * Returns the original `Wresult` unchanged.
+ *
+ * @param block The function that will be executed.
+ * @return The original `Wresult` unchanged.
+ */
+suspend inline fun <T> Wresult<T>.suspendOnFailure(
+    crossinline block: suspend (Throwable?) -> Unit,
 ): Wresult<T> {
     if (this is Wresult.Failure) {
         block(throwable)
@@ -49,8 +66,42 @@ inline fun <T, reified V> Wresult<T>.mapOnFailure(
  * @return The result of [mapper] function as a `Wresult`.
  */
 @Suppress("UNCHECKED_CAST")
+suspend inline fun <T, reified V> Wresult<T>.suspendMapOnFailure(
+    crossinline mapper: suspend (Throwable?) -> V,
+): Wresult<V> {
+    if (this is Wresult.Failure) {
+        return suspendWresultOf { mapper(throwable) }
+    }
+    return this as Wresult<V>
+}
+
+/**
+ * Executes the given [mapper] function if this instance represents [Failure][Wresult.Failure].
+ * Returns the result of [mapper] function as a `Wresult`.
+ *
+ * @param mapper The function that will be executed.
+ * @return The result of [mapper] function as a `Wresult`.
+ */
+@Suppress("UNCHECKED_CAST")
 inline fun <T, V> Wresult<T>.flatMapOnFailure(
     crossinline mapper: (Throwable?) -> Wresult<V>,
+): Wresult<V> {
+    if (this is Wresult.Failure) {
+        return mapper(throwable)
+    }
+    return this as Wresult<V>
+}
+
+/**
+ * Executes the given [mapper] function if this instance represents [Failure][Wresult.Failure].
+ * Returns the result of [mapper] function as a `Wresult`.
+ *
+ * @param mapper The function that will be executed.
+ * @return The result of [mapper] function as a `Wresult`.
+ */
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <T, V> Wresult<T>.suspendFlatMapOnFailure(
+    crossinline mapper: suspend (Throwable?) -> Wresult<V>,
 ): Wresult<V> {
     if (this is Wresult.Failure) {
         return mapper(throwable)

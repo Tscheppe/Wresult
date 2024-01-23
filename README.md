@@ -21,6 +21,6 @@ allprojects {
 
 ```gradle
 dependencies {
-    implementation 'com.github.tscheppe:wresult:$wresult_version
+    implementation 'com.github.tscheppe:wresult:<wresult_version>
 }
 ```

@@ -42,6 +42,23 @@ sealed interface Wresult<out T> {
 
         /**
          * Executes the given provider function and returns its encapsulated result value as a Wresult.Success.
+         * Returns a Wresult.Failure if an exception is thrown.
+         *
+         * @param provider The provider function that will be invoked.
+         * @return A Wresult.Success encapsulating the result of invoking the given provider function,
+         * or a Wresult.Failure if an exception is thrown.
+         */
+        suspend inline fun <reified T> suspendWresultOf(crossinline provider: suspend () -> T): Wresult<T> {
+            return try {
+                val result = provider()
+                Success(result)
+            } catch (e: Throwable) {
+                Failure(e)
+            }
+        }
+
+        /**
+         * Executes the given provider function and returns its encapsulated result value as a Wresult.Success.
          * Returns a Wresult.Failure if an exception is thrown or if [isFailure] returns true.
          *
          * @param isFailure Additional Error condition.
@@ -52,6 +69,32 @@ sealed interface Wresult<out T> {
         inline fun <reified T> wresultOf(
             crossinline isFailure: (T) -> Boolean,
             crossinline provider: () -> T
+        ): Wresult<T> {
+            return try {
+                val result = provider()
+
+                if (isFailure(result)) {
+                    Failure()
+                } else {
+                    Success(result)
+                }
+            } catch (e: Throwable) {
+                Failure(e)
+            }
+        }
+
+        /**
+         * Executes the given provider function and returns its encapsulated result value as a Wresult.Success.
+         * Returns a Wresult.Failure if an exception is thrown or if [isFailure] returns true.
+         *
+         * @param isFailure Additional Error condition.
+         * @param provider The provider function that will be invoked.
+         * @return A Wresult.Success encapsulating the result of invoking the given provider function,
+         * or a Wresult.Failure if an exception is thrown.
+         */
+        suspend inline fun <reified T> suspendWresultOf(
+            crossinline isFailure: (T) -> Boolean,
+            crossinline provider: suspend () -> T
         ): Wresult<T> {
             return try {
                 val result = provider()
